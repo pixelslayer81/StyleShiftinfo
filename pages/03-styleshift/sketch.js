@@ -32,8 +32,13 @@ const RUN_STEPS = [
 // Library: 23 renders grouped by look, Candid first; the first is the hero.
 // (Device-only product shots are left out.)
 const LIBRARY = [
-  // Candid (reversed), with the mirror selfie (lib-24) third from the end
-  ["lib-23", "Candid"], ["lib-22", "Candid"], ["lib-20", "Candid"], ["lib-19", "Candid"],
+  // Candid: the thirteen supplied renders in the order given (lib-30 leads),
+  // then the earlier Candid set (reversed, selfie third from its end)
+  ["lib-30", "Candid"], ["lib-31", "Candid"], ["lib-32", "Candid"], ["lib-33", "Candid"],
+  ["lib-34", "Candid"], ["lib-35", "Candid"], ["lib-36", "Candid"], ["lib-37", "Candid"],
+  ["lib-38", "Candid"], ["lib-39", "Candid"], ["lib-40", "Candid"], ["lib-41", "Candid"],
+  ["lib-42", "Candid"],
+  ["lib-23", "Candid"], ["lib-22", "Candid"], ["lib-20", "Candid"],
   ["lib-17", "Candid"], ["lib-24", "Candid"], ["lib-14", "Candid"], ["lib-06", "Candid"],
   // Shadows
   ["lib-25", "Shadows"],
@@ -41,7 +46,7 @@ const LIBRARY = [
   ["lib-11", "Pantone Blue"], ["lib-21", "Pantone Blue"],
   // Pantone Green
   ["lib-01", "Pantone Green"], ["lib-02", "Pantone Green"], ["lib-04", "Pantone Green"],
-  ["lib-09", "Pantone Green"], ["lib-12", "Pantone Green"], ["lib-18", "Pantone Green"],
+  ["lib-12", "Pantone Green"], ["lib-18", "Pantone Green"],
   // Pantone Pink
   ["lib-03", "Pantone Pink"], ["lib-05", "Pantone Pink"], ["lib-10", "Pantone Pink"],
   ["lib-13", "Pantone Pink"], ["lib-15", "Pantone Pink"], ["lib-16", "Pantone Pink"],
@@ -308,7 +313,7 @@ function mountLibrary() {
 
 function addToLibrary() {
   const ag = $("#gallery");
-  const map = { candid: "lib-19", shadows: "lib-25", "pantone-blue": "lib-11", "pantone-green": "lib-04", "pantone-pink": "lib-03" };
+  const map = { candid: "lib-38", shadows: "lib-25", "pantone-blue": "lib-11", "pantone-green": "lib-04", "pantone-pink": "lib-03" };
   const p = makePanel(map[state.look] || "lib-19", LOOK_LABEL[state.look]);
   ag.prepend(p);
   for (const q of ag.querySelectorAll(".ag-panel")) q.classList.toggle("ag-panel--on", q === p);
