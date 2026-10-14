@@ -21,9 +21,14 @@ are classic `<script src>` files rather than ES modules: Chrome/Edge refuse `imp
 - After writing a page, do a careful static read of the script, then
   `Start-Process pages\NN-slug\index.html` and ask the user to report behaviour and
   console errors. State plainly that runtime was not verified by the agent.
-- No git: there is no history to lean on; README/CLAUDE.md are the only record of decisions.
-  Copy a page's current files into `pages/NN-slug/versions/<name>-<date>/` before big
-  style changes; that folder is the revert mechanism.
+- Git for Windows was installed 2026-10-14 (`C:\Program Files\Git\cmd`, add it to PATH in
+  the agent shell) and the repo pushes to https://github.com/pixelslayer81/StyleShiftinfo.
+  The harness sets `GIT_TERMINAL_PROMPT=0` and `GCM_INTERACTIVE=never`, so a push that
+  needs credentials fails with "could not read Username" unless the command sets
+  `$env:GIT_TERMINAL_PROMPT="1"; $env:GCM_INTERACTIVE="always"` first (then Git Credential
+  Manager opens the browser sign-in; credentials are stored after the first success).
+  Before that date there was no git: `pages/NN-slug/versions/<name>-<date>/` folders were the
+  revert mechanism and still exist; prefer commits for new work.
 - No bundler/linter means syntax errors surface only in the browser. A duplicate `const`
   in one scope once broke the entire page 02. After editing, re-read the edited scope for
   redeclared names and unbalanced braces.
