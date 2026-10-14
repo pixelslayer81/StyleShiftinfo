@@ -32,9 +32,9 @@ const RUN_STEPS = [
 // Library: 23 renders grouped by look, Candid first; the first is the hero.
 // (Device-only product shots are left out.)
 const LIBRARY = [
-  // Candid
-  ["lib-06", "Candid"], ["lib-14", "Candid"], ["lib-17", "Candid"], ["lib-19", "Candid"],
-  ["lib-20", "Candid"], ["lib-22", "Candid"], ["lib-23", "Candid"], ["lib-24", "Candid"],
+  // Candid (reversed), with the mirror selfie (lib-24) third from the end
+  ["lib-23", "Candid"], ["lib-22", "Candid"], ["lib-20", "Candid"], ["lib-19", "Candid"],
+  ["lib-17", "Candid"], ["lib-24", "Candid"], ["lib-14", "Candid"], ["lib-06", "Candid"],
   // Shadows
   ["lib-25", "Shadows"],
   // Pantone Blue
