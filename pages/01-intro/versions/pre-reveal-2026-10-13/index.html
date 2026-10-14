@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design &amp; Technology</title>
+  <meta name="description" content="Page 01: design and technology projects.">
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="page">
+    <header class="hero">
+      <img class="hero__photo" id="hero-photo" src="assets/hero.png" alt="Portrait with windswept hair, red lipstick and a metallic top, looking into the camera.">
+      <!-- Glitch layer: hold the left button on the photo to stretch its pixels outward from the cursor. -->
+      <canvas class="hero__glitch" id="hero-glitch" aria-hidden="true"></canvas>
+      <h1 class="hero__title">
+        <span class="hero__design">Design</span>
+        <span class="hero__sub"><span class="hero__amp">&amp;</span> Technology</span>
+      </h1>
+    </header>
+
+    <nav class="index" aria-label="Projects">
+      <ol class="index__list">
+        <li class="index__row">
+          <a class="index__link" href="../03-styleshift/index.html">
+            <span class="index__num">(01)</span>
+            <span class="index__title">StyleShift Web App</span>
+            <span class="index__desc">Style Shift lets you instantly restyle photos to match different brand aesthetics while keeping the original image intact. The app preserves faces, poses, objects, and composition, then checks each result for accuracy. Users can fine-tune colors and grain, create social-media crops, and save or download finished images.</span>
+          </a>
+        </li>
+        <li class="index__row">
+          <a class="index__link" href="#">
+            <span class="index__num">(02)</span>
+            <span class="index__title">Always On Social</span>
+            <span class="index__desc">Always On Social turns rough updates into brand-approved social content. It creates on-brand copy, prevents unsupported claims, and generates ready-to-publish designs across major social formats. It also reviews content for compliance and supports new brand onboarding quickly.</span>
+          </a>
+        </li>
+        <li class="index__row">
+          <a class="index__link" href="#">
+            <span class="index__num">(03)</span>
+            <span class="index__title">Excel</span>
+            <span class="index__desc">The M365 Spreadsheet &amp; Charts tool creates on-brand Excel-style visuals in a browser. Build editable charts, cell artwork, and free-drawn shapes using official colors and typography. Preview with rulers and guides, then export crisp SVGs for campaigns and motion work quickly.</span>
+          </a>
+        </li>
+        <li class="index__row">
+          <a class="index__link" href="#">
+            <span class="index__num">(04)</span>
+            <span class="index__title">Runway Retexture</span>
+            <span class="index__desc">Style Shift lets you instantly restyle photos to match different brand aesthetics while keeping the original image intact. The app preserves faces, poses, objects, and composition, then checks each result for accuracy. Users can fine-tune colors and grain, create social-media crops, and save or download finished images.</span>
+          </a>
+        </li>
+        <li class="index__row">
+          <a class="index__link" href="#">
+            <span class="index__num">(05)</span>
+            <span class="index__title">DotDasher</span>
+            <span class="index__desc">Dot Dasher is a web tool that creates on-brand dot-pattern artwork from maps and custom shapes. Users can customize dot size, spacing, colors, and layouts, then export clean vector graphics. The browser-based engine runs entirely client-side, requiring no backend.</span>
+          </a>
+        </li>
+        <li class="index__row">
+          <a class="index__link" href="#">
+            <span class="index__num">(06)</span>
+            <span class="index__title">Motion Reference</span>
+            <span class="index__desc">Style Shift lets you instantly restyle photos to match different brand aesthetics while keeping the original image intact. The app preserves faces, poses, objects, and composition, then checks each result for accuracy. Users can fine-tune colors and grain, create social-media crops, and save or download finished images.</span>
+          </a>
+        </li>
+        <li class="index__row">
+          <a class="index__link" href="#">
+            <span class="index__num">(07)</span>
+            <span class="index__title">Character Profile</span>
+            <span class="index__desc">Style Shift lets you instantly restyle photos to match different brand aesthetics while keeping the original image intact. The app preserves faces, poses, objects, and composition, then checks each result for accuracy. Users can fine-tune colors and grain, create social-media crops, and save or download finished images.</span>
+          </a>
+        </li>
+      </ol>
+    </nav>
+  </main>
+
+  <script src="sketch.js"></script>
+  <script>
+    window.IntroSketch.mount(document.getElementById("page"));
+  </script>
+</body>
+</html>

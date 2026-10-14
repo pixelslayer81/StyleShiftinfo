@@ -1,0 +1,77 @@
+/* Page 02: full-viewport section, copy block centered over a drawing canvas. */
+body {
+  background: var(--bg);
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+
+.page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--gutter);
+  overflow: hidden;
+  /* Keep the browser from treating a drag as text selection or scroll. */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.page__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.page__canvas--front {
+  /* Sits over the copy; input still goes to the back canvas. */
+  pointer-events: none;
+  z-index: 2;
+  /* Pencil marks on this layer multiply onto the page like they do within a
+     canvas, so a grey trail over a black tube stays black instead of showing
+     as a lighter line. */
+  mix-blend-mode: multiply;
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--measure);
+  /* Lets drags start over the text and reach the canvas beneath. */
+  pointer-events: none;
+}
+
+.copy__body {
+  color: var(--accent);
+  font-size: var(--text-sm);
+  line-height: var(--leading);
+}
+
+.copy__body strong {
+  font-weight: 700;
+}
+
+/* One span per character, so spheres can push letters individually. */
+.copy__body .ch {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Instruction in the top-right corner. */
+.corner {
+  position: absolute;
+  z-index: 3;
+  top: 24px;
+  right: 24px;
+  color: var(--accent);
+  font-size: var(--text-sm);
+  line-height: var(--leading);
+  pointer-events: none;
+  white-space: nowrap;
+}

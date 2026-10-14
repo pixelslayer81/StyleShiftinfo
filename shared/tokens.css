@@ -1,0 +1,16 @@
+/* Design tokens shared by every page. Change brand values here only. */
+:root {
+  --bg: #f3efe7; /* cream paper; page 01 set this and every page matches it */
+  --accent: #d63a3a;
+  --accent-rgb: 214, 58, 58; /* same red, for rgba() in canvas/CSS */
+  --pencil-rgb: 52, 52, 58; /* graphite, for pencil-style canvas marks */
+  --ink: #111111;
+
+  --font-sans: Consolas, "Cascadia Mono", "SF Mono", Menlo, "DejaVu Sans Mono", monospace;
+
+  --text-sm: 14px;
+  --leading: 1.45;
+
+  --gutter: 16px;
+  --measure: 370px; /* width of the centered copy block */
+}

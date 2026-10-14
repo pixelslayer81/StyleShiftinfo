@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Task Force</title>
+  <meta name="description" content="Right-click and draw a line. Let go, and a flock follows it.">
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="page">
+    <canvas class="page__canvas" id="canvas" aria-hidden="true"></canvas>
+
+    <section class="copy">
+      <p class="copy__body">
+        <strong>The AI Task Force</strong> is a cross-functional team focused on
+        identifying, developing, and scaling AI-powered solutions that improve
+        productivity, creativity, and business outcomes. The team evaluates
+        emerging AI technologies, builds practical tools and applications,
+        establishes best practices and governance, and helps teams adopt AI
+        responsibly. By combining expertise in technology, design, and business
+        strategy, the AI Task Force accelerates innovation, streamlines
+        workflows, and ensures AI solutions align with organizational goals,
+        brand standards, and user needs.
+      </p>
+    </section>
+
+    <!-- Above the copy: a few trails are drawn here when they pass in front of the text. -->
+    <canvas class="page__canvas page__canvas--front" id="canvas-front" aria-hidden="true"></canvas>
+
+    <p class="hint" id="hint">
+      <span class="hint__mouse">Right-click and draw. Press C to clear.</span>
+      <span class="hint__touch">Drag to draw.</span>
+    </p>
+  </main>
+
+  <script src="sketch.js"></script>
+  <script>
+    window.FlockSketch.mount(document.getElementById("page"));
+  </script>
+</body>
+</html>

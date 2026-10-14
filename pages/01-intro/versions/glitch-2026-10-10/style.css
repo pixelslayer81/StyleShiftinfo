@@ -1,0 +1,208 @@
+/* Page 01: full-bleed photo hero with the red headline, then the project index. */
+:root {
+  --cream: #f3efe7;
+  --rule: 1px;
+  /* This page follows the mockup's heavy geometric sans rather than the
+     shared monospace token. */
+  --font-display: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Index metrics measured from the reference (1489px wide): number column
+     starts at 120px, title at 215px, description at 945px and runs ~460px.
+     Expressed in vw so the proportions hold at any width. */
+  --index-indent: 8.05vw; /* 120 / 1489 */
+  --num-width: 6.4vw; /* 95 / 1489 */
+  --desc-width: 30.9vw; /* 460 / 1489 */
+  --row-font: 2.85vw; /* ~42px at 1489 */
+  --row-pad: 0.42vw;
+  --hero-ratio: 1492 / 670; /* the reference hero frame; the photo is width-fitted and top-aligned in it */
+}
+
+body {
+  background: var(--cream);
+  font-family: var(--font-display);
+  color: var(--accent);
+  overflow-x: hidden;
+}
+
+.page {
+  width: 100vw;
+  /* At least one viewport tall; may run past it so the hero keeps the
+     reference crop on short windows (the page then scrolls). */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------- hero */
+
+.hero {
+  position: relative;
+  /* The reference frame shape, so the crop matches regardless of window
+     height; the index below takes its natural height and any remaining
+     space stays cream at the bottom. */
+  flex: 0 0 auto;
+  width: 100%;
+  aspect-ratio: var(--hero-ratio);
+  overflow: hidden;
+}
+
+.hero__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Reference crop: the frame starts at the top of the hair and loses the
+     bottom of the photo (the hand), with the face centred horizontally. */
+  object-position: 50% 0%;
+}
+
+.hero__glitch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.hero__glitch.is-active {
+  opacity: 1;
+}
+
+.hero__title {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  display: flex;
+  flex-direction: column;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+
+.hero__design {
+  font-size: clamp(72px, 13.4vw, 196px);
+  font-weight: 900;
+  line-height: 0.84;
+}
+
+.hero__sub {
+  margin-top: 0.08em;
+  font-size: clamp(22px, 3.2vw, 46px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.hero__amp {
+  font-weight: 300;
+  margin-right: 0.12em;
+}
+
+/* --------------------------------------------------------------- index */
+
+.index {
+  flex: 0 0 auto;
+  background: var(--cream);
+}
+
+.index__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.index__row {
+  border-bottom: var(--rule) solid var(--accent);
+}
+
+.index__row:first-child {
+  border-top: var(--rule) solid var(--accent);
+}
+
+.index__link {
+  display: grid;
+  grid-template-columns: var(--num-width) 1fr var(--desc-width);
+  align-items: center;
+  column-gap: 1vw;
+  padding: var(--row-pad) 1.6vw var(--row-pad) var(--index-indent);
+  color: var(--accent);
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.index__num,
+.index__title {
+  font-size: var(--row-font);
+  font-weight: 500;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.index__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.index__desc {
+  font-size: 0.72vw; /* ~10.7px at 1489 */
+  line-height: 1.35;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Active and hovered rows invert to red. */
+.index__row.is-active .index__link,
+.index__row:hover .index__link {
+  background: var(--accent);
+  color: #fff;
+}
+
+.index__row.is-active .index__title,
+.index__row:hover .index__title {
+  font-weight: 800;
+}
+
+.index__row.is-active .index__num,
+.index__row:hover .index__num {
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------- responsive */
+
+@media (max-width: 900px) {
+  :root {
+    --row-font: 24px;
+    --row-pad: 6px;
+    --num-width: 72px;
+    --hero-ratio: 4 / 3; /* taller frame on narrow screens so the face is not tiny */
+  }
+  .index__link {
+    grid-template-columns: var(--num-width) 1fr;
+  }
+  .index__desc {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  :root {
+    --row-font: 20px;
+    --num-width: 56px;
+    --index-indent: var(--gutter);
+  }
+  .hero__title {
+    left: var(--gutter);
+  }
+  .index__link {
+    padding-right: var(--gutter);
+  }
+}

@@ -1,0 +1,9 @@
+# Raw Claude Code session transcripts (full chat history, local paths); the
+# curated knowledge in .claude/memory/knowledge and MEMORY.md is committed.
+.claude/memory/sessions/
+.claude/settings.local.json
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store

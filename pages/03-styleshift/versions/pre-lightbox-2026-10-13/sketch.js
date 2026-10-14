@@ -1,0 +1,330 @@
+// Page 03: Style Shift. Wires the app mock: radio groups, before/after,
+// accordion adjustments, a staged restyle run (the real pipeline's step
+// labels), look selection, the accordion library, results collapse.
+// Exposes window.StyleShiftSketch = { mount(container), unmount() }. Classic
+// script (not a module) so the page works when opened straight from file://.
+
+(function () {
+"use strict";
+
+const LOOK_LABEL = {
+  original: "Original",
+  candid: "Candid",
+  shadows: "Shadows",
+  "pantone-blue": "Pantone Blue",
+  "pantone-green": "Pantone Green",
+  "pantone-pink": "Pantone Pink",
+};
+const RES_PX = { "1k": "1376×768", "2k": "2752×1536", "4k": "5504×3072" };
+
+// The live pipeline's step labels (lowercased by the UI) with a detail each.
+const RUN_STEPS = [
+  ["queued", ""],
+  ["analyzing photo", "claude vision — writing the content lock"],
+  ["building the locked prompt", "locks: identity · pose/wardrobe · camera · composition · environment · era · 16:9 native"],
+  ["generating on runway", "gemini_image3_pro @ 16:9 (2K)"],
+  ["downloading the render", "4.6 MB received"],
+  ["content audit", "comparing render vs source — 5 hard rules"],
+  ["colorist grading", "measuring luminance percentiles · deriving exposure / warmth / saturation / levels"],
+  ["applying the treatment", "adding film grain — strength 19.5 @ 2752px · scale 1.5"],
+];
+
+// Library: 24 renders; the yellow-jacket portrait is the hero by default.
+const LIBRARY = [
+  ["lib-02", "Candid"], ["lib-03", "Pantone Pink"], ["lib-04", "Pantone Green"], ["lib-05", "Pantone Pink"],
+  ["lib-06", "Candid"], ["lib-07", "Pantone Pink"], ["lib-08", "Pantone Blue"], ["lib-09", "Pantone Green"],
+  ["lib-10", "Pantone Pink"], ["lib-11", "Pantone Blue"], ["lib-12", "Pantone Green"],
+  ["lib-01", "Candid"],
+  ["lib-13", "Pantone Pink"], ["lib-14", "Candid"], ["lib-15", "Pantone Pink"], ["lib-16", "Pantone Pink"],
+  ["lib-17", "Candid"], ["lib-18", "Pantone Green"], ["lib-19", "Candid"], ["lib-20", "Candid"],
+  ["lib-21", "Candid"], ["lib-22", "Candid"], ["lib-23", "Candid"], ["lib-24", "Candid"],
+];
+
+let listeners = [];
+let root;
+let state = { look: "candid", res: "2k", ba: "after", format: "single", crop: "off" };
+let runTimer = 0;
+let hoverTimer = 0; // library hover-dwell timer
+
+function on(target, type, fn, opts) {
+  if (!target) return;
+  target.addEventListener(type, fn, opts);
+  listeners.push(() => target.removeEventListener(type, fn, opts));
+}
+const $ = (sel) => root.querySelector(sel);
+
+function setStatus(html, proc) {
+  const el = $("#status");
+  if (!el) return;
+  el.innerHTML = html;
+  el.classList.toggle("proc", proc !== false);
+}
+
+// --------------------------------------------------------- radio groups
+
+function mountGroups() {
+  for (const group of root.querySelectorAll("[data-group]")) {
+    const key = group.dataset.group;
+    on(group, "click", (e) => {
+      const btn = e.target.closest("button[data-value]");
+      if (!btn || !group.contains(btn)) return;
+      for (const b of group.querySelectorAll("button[data-value]")) b.classList.toggle("on", b === btn);
+      state[key] = btn.dataset.value;
+      onChange(key);
+    });
+  }
+}
+
+function onChange(key) {
+  const img = $("#stage-img");
+  if (key === "look") {
+    setStatus(`Look — ${LOOK_LABEL[state.look]}. Hit Run restyle to render.`);
+  }
+  if (key === "ba") img.classList.toggle("is-before", state.ba === "before");
+  if (key === "res") setStatus(`Resolution — ${state.res.toUpperCase()} (${RES_PX[state.res]}px).`);
+  if (key === "format" && $("#panel-note")) {
+    $("#panel-note").innerHTML = state.format === "batch"
+      ? "Batch runs every photo on automatic settings — flash, grain, levels and crop are set to auto."
+      : "Adjustments re-process the generated photo locally — no new generation. Set them, then hit <em>Apply</em>.";
+    $("#btn-run").textContent = state.format === "batch" ? "Run restyle (1)" : "Run restyle";
+  }
+  if (key === "crop") setStatus(state.crop === "off" ? "Crop off." : `Crop — ${state.crop}. Use the gizmo: red/green arrows move on one axis, the yellow centre square scales, the ring rotates.`);
+}
+
+// ---------------------------------------------------------- accordions
+
+function mountAccordions() {
+  for (const acc of root.querySelectorAll(".acc")) {
+    const head = acc.querySelector(".acc-head");
+    const caret = acc.querySelector(".acc-caret");
+    on(head, "click", () => {
+      const open = acc.classList.toggle("is-open");
+      caret.innerHTML = open ? "&#9662;" : "&#9656;";
+    });
+    // Live value readouts.
+    for (const row of acc.querySelectorAll(".sliderrow")) {
+      const range = row.querySelector('input[type="range"]');
+      const val = row.querySelector(".val");
+      const num = row.querySelector(".numinput");
+      if (!range) continue;
+      on(range, "input", () => {
+        const v = Number(range.value);
+        if (num) num.value = String(v);
+        if (val) {
+          const label = row.querySelector("label").textContent.toLowerCase();
+          val.textContent = label === "hue" ? `${v}°` : Number.isInteger(Number(range.step)) || Number(range.step) >= 1 ? String(v) : v.toFixed(2);
+        }
+        applyPreview();
+      });
+      if (num) on(num, "input", () => { range.value = num.value; range.dispatchEvent(new Event("input")); });
+    }
+  }
+  on($("#btn-revert"), "click", () => {
+    for (const range of root.querySelectorAll('.acc input[type="range"]')) {
+      range.value = range.defaultValue;
+      range.dispatchEvent(new Event("input"));
+    }
+    setStatus("Reverted to the original render.");
+  });
+}
+
+/** Local preview of the colour controls on the stage image. */
+function applyPreview() {
+  const get = (acc, i = 0) => Number(root.querySelectorAll(`[data-acc="${acc}"] input[type="range"]`)[i]?.value || 0);
+  const heat = get("flash");
+  const warmth = get("colour", 0);
+  const exposure = get("colour", 1) || 1;
+  const hue = get("hue", 0);
+  const sat = get("hue", 1);
+  const img = $("#stage-img");
+  img.style.filter = `brightness(${exposure * (1 + heat / 400)}) sepia(${Math.max(0, warmth) * 0.4}) hue-rotate(${hue}deg) saturate(${1 + sat / 100})`;
+}
+
+// ------------------------------------------------------------- restyle
+
+function runRestyle() {
+  const img = $("#stage-img");
+  if (img.classList.contains("is-rendering")) return;
+  img.classList.add("is-rendering");
+  const runBtn = $("#btn-run");
+  if (runBtn) runBtn.textContent = "Working…";
+  let i = 0;
+  const tick = () => {
+    if (i < RUN_STEPS.length) {
+      const [step, detail] = RUN_STEPS[i++];
+      setStatus(`<span class="proc-cursor">▌</span> ${step}${detail ? " — " + detail : ""}`);
+      runTimer = setTimeout(tick, 520);
+    } else {
+      img.classList.remove("is-rendering");
+      if (runBtn) runBtn.textContent = state.format === "batch" ? "Run restyle (1)" : "Run restyle";
+      setStatus(`Done — ${RES_PX[state.res]}px.`);
+    }
+  };
+  tick();
+}
+
+function mountButtons() {
+  on($("#btn-run"), "click", runRestyle);
+  on($("#btn-run-2"), "click", runRestyle);
+  on($("#btn-rerun"), "click", runRestyle);
+  on($("#btn-clear"), "click", () => setStatus("Cleared. Drop in a photo."));
+  on($("#btn-download"), "click", () => setStatus(`Downloading — ${LOOK_LABEL[state.look]} ${RES_PX[state.res]}px PNG.`));
+  on($("#btn-library"), "click", addToLibrary);
+  on($("#btn-library-2"), "click", addToLibrary);
+  on($("#btn-download-all"), "click", () => setStatus("Downloading the library as a zip."));
+  on($("#looks-grid"), "click", (e) => {
+    const fig = e.target.closest(".look");
+    if (!fig || fig.dataset.look === "original") return;
+    const radio = root.querySelector(`[data-group="look"] button[data-value="${fig.dataset.look}"]`);
+    if (radio) radio.click();
+    else {
+      state.look = fig.dataset.look;
+      onChange("look");
+    }
+  });
+  // Results card collapse / expand: the card animates its height to zero
+  // (a pill-capped line pivoting at the top edge) and the button strip
+  // below it masks away with it, as in the app.
+  const card = $("#auditcard");
+  const mask = $("#auditactions");
+  const btn = $("#btn-collapse");
+  if (btn) on(btn, "click", () => {
+    const collapsing = !card.classList.contains("is-collapsed");
+    card.style.height = `${card.scrollHeight}px`;
+    mask.style.height = `${mask.scrollHeight}px`;
+    requestAnimationFrame(() => {
+      card.classList.toggle("is-collapsed", collapsing);
+      mask.classList.toggle("is-collapsed", collapsing);
+      if (!collapsing) {
+        card.style.height = `${card.scrollHeight}px`;
+        mask.style.height = `${mask.scrollHeight}px`;
+        setTimeout(() => { card.style.height = ""; mask.style.height = ""; }, 620);
+      }
+    });
+    btn.title = collapsing ? "Expand the results" : "Collapse the results";
+    btn.innerHTML = collapsing
+      ? '<span class="audit-collapse-caret">&#9656;</span> Expand'
+      : '<span class="audit-collapse-caret">&#9662;</span> Collapse';
+  });
+}
+
+// -------------------------------------------------------------- library
+
+// The app's AccordionGallery props: expandRatio 0.29, gap 2, radius 4,
+// showLabels false, defaultIndex 0. The hero overlay carries Crop above a
+// heart / Save / Delete row.
+function makePanel(id, label) {
+  const el = document.createElement("div");
+  el.className = "ag-panel";
+  el.dataset.id = id;
+  el.innerHTML = `
+    <img src="assets/${id}.jpg" alt="${label}" loading="lazy">
+    <div class="ag-actions">
+      <button class="btn btn--fill btn--tocanvas" title="Send this image back to the canvas to apply a crop">Crop</button>
+      <div class="ag-actions-row">
+        <button class="heart" title="Favourite"><svg viewBox="0 0 24 21"><path d="M12 20s-9-5.6-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.4-9 12-9 12z"/></svg></button>
+        <button class="btn btn--fill btn--save">Save</button>
+        <button class="btn btn--delete">Delete</button>
+      </div>
+    </div>`;
+  return el;
+}
+
+/** Proxy scrollbar below the panel: its inner width mirrors the gallery's
+    true width (hero + slivers + padding), and the two scroll in sync. */
+function measureLibrary() {
+  const panel = $("#library-panel");
+  const inner = $("#library-scrollbar-inner");
+  const ag = $("#gallery");
+  if (!panel || !inner || !ag) return;
+  const pad = 28; // panel padding 14px each side
+  const agW = panel.clientWidth - pad;
+  const n = ag.children.length;
+  const hero = 0.48 * agW;
+  const sliver = Math.min(44, Math.max(18, 0.022 * agW));
+  const total = hero + Math.max(0, n - 1) * (sliver + 2) + pad;
+  inner.style.width = `${Math.max(total, panel.scrollWidth)}px`;
+}
+
+function mountLibrary() {
+  const ag = $("#gallery");
+  if (!ag) return;
+  for (const [id, label] of LIBRARY) ag.appendChild(makePanel(id, label));
+  const panels = () => Array.from(ag.querySelectorAll(".ag-panel"));
+  const select = (p) => { for (const q of panels()) q.classList.toggle("ag-panel--on", q === p); };
+  select(panels()[0]); // defaultIndex 0
+  // Hover expands after a short dwell (so sweeping across the strip does not
+  // ripple every sliver open); it stays expanded after the pointer leaves,
+  // so there is always one hero.
+  const HOVER_DWELL = 660; // ms (three beats of 220)
+  on(ag, "pointerover", (e) => {
+    const p = e.target.closest(".ag-panel");
+    if (!p || p.classList.contains("ag-panel--on")) return;
+    clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(() => select(p), HOVER_DWELL);
+  });
+  on(ag, "pointerout", (e) => {
+    const p = e.target.closest(".ag-panel");
+    const to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest(".ag-panel") : null;
+    if (p && to !== p) clearTimeout(hoverTimer); // left the panel before the dwell elapsed
+  });
+  on(ag, "click", (e) => {
+    const heart = e.target.closest(".heart");
+    if (heart) { heart.classList.toggle("on"); return; }
+    const btn = e.target.closest(".btn");
+    if (btn) {
+      const p = btn.closest(".ag-panel");
+      if (btn.classList.contains("btn--delete")) {
+        const next = p.nextElementSibling || p.previousElementSibling;
+        p.remove();
+        if (next) select(next);
+        measureLibrary();
+      } else if (btn.classList.contains("btn--save")) {
+        setStatus("Saved to your Downloads folder.");
+      } else {
+        setStatus("Sent back to the canvas — pick a crop format.");
+      }
+      return;
+    }
+    const p = e.target.closest(".ag-panel");
+    if (p) select(p);
+  });
+  // Scroll sync, both ways, guarded against feedback.
+  const panel = $("#library-panel");
+  const bar = $("#library-scrollbar");
+  let syncing = false;
+  on(panel, "scroll", () => { if (syncing) return; syncing = true; bar.scrollLeft = panel.scrollLeft; syncing = false; });
+  on(bar, "scroll", () => { if (syncing) return; syncing = true; panel.scrollLeft = bar.scrollLeft; syncing = false; });
+  on(window, "resize", measureLibrary);
+  measureLibrary();
+}
+
+function addToLibrary() {
+  const ag = $("#gallery");
+  const map = { candid: "lib-19", shadows: "lib-23", "pantone-blue": "lib-08", "pantone-green": "lib-04", "pantone-pink": "lib-03" };
+  const p = makePanel(map[state.look] || "lib-19", LOOK_LABEL[state.look]);
+  ag.prepend(p);
+  for (const q of ag.querySelectorAll(".ag-panel")) q.classList.toggle("ag-panel--on", q === p);
+  measureLibrary();
+  setStatus("Added to the library.");
+}
+
+// ------------------------------------------------------------------ api
+
+function mount(el) {
+  root = el;
+  mountGroups();
+  mountAccordions();
+  mountButtons();
+  mountLibrary();
+}
+
+function unmount() {
+  clearTimeout(runTimer);
+  clearTimeout(hoverTimer);
+  for (const off of listeners) off();
+  listeners = [];
+}
+
+window.StyleShiftSketch = { mount, unmount };
+})();

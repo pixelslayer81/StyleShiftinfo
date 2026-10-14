@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Style Shift</title>
+  <meta name="description" content="Style Shift: brand-safe photo restyle. Looks live as data in /Brain; content is immutable.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page" id="page">
+
+    <!-- ============================================================ title -->
+    <h1 class="title"><span>Style</span> <span class="title-outline">Shift</span></h1>
+
+    <!-- ============================================================ intro -->
+    <section class="intro">
+      <div class="intro-num">01</div>
+      <div class="intro-copy">
+        <p><strong>What is it:</strong> Style Shift is a web app that re-renders any uploaded photograph in a chosen editorial "look" while guaranteeing the photo's content never changes. It takes the brand-aware generation workflow built in Claude and Runway and turns it into a designer-friendly tool, bringing all the AI and automation under the hood without requiring any coding.</p>
+        <p><strong>Why we built it:</strong> Style Shift makes consistent, on-brand image transformation simple for everyone. It allows non-designers to easily restyle existing photography without having to understand prompts, design tools, or complex AI workflows. Visual styles are built into the tool, making results repeatable and consistent across images, campaigns, and channels. Users simply choose the look they want and Style Shift handles the complexity behind the scenes. The result is an easy-to-use system that helps teams create consistent imagery, reuse existing assets, and scale content without scaling complexity.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ work row -->
+    <section class="workrow workrow--solo">
+      <div class="canvascol">
+        <div class="canvas">
+          <div class="stage stage--full" id="stage">
+            <img id="stage-img" src="assets/stage.jpg" alt="Candid restyle of a portrait: a man holding a laptop against a green wall.">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ looks -->
+    <section class="looks">
+      <div class="side-copy">
+        <h2 class="section-title">Looks</h2>
+        <p>The Style Shift look lineup includes <b>Candid</b>, a signature documentary-inspired look with on-camera flash, natural film grain, and authentic 35mm photography aesthetics; <b>Shadows</b>, a dramatic look focused on bold lighting and contrast; and the <b>Pantone Collection</b>, a series of tone-on-tone color treatments available in <b>Green</b>, <b>Pink</b>, <b>Blue</b>, and future colorways. These looks transform clothing, props, and background surfaces into a unified color story while preserving key elements. Skin tones, hair, outdoor skies, laptops, and paper materials remain unchanged, backgrounds are recolored rather than replaced, and each image is limited to two solid accent colors for a clean, cohesive result. New Pantone colorways can be added quickly through a simple configuration update.</p>
+      </div>
+      <div class="looks-grid" id="looks-grid">
+        <figure class="look" data-look="original"><img src="assets/look-original.jpg" alt="Original photo: a man seated on steps with a laptop."><figcaption class="look-tag">Original</figcaption></figure>
+        <figure class="look" data-look="candid"><img src="assets/look-shadows.jpg" alt="Candid look."><figcaption class="look-tag">Candid</figcaption></figure>
+        <figure class="look" data-look="shadows"><img src="assets/look-candid.jpg" alt="Shadows look."><figcaption class="look-tag">Shadows</figcaption></figure>
+        <figure class="look" data-look="pantone-blue"><img src="assets/look-pantone-blue.jpg" alt="Pantone Blue look."><figcaption class="look-tag look-tag--blue">Pantone <span>Blue</span></figcaption></figure>
+        <figure class="look" data-look="pantone-green"><img src="assets/look-pantone-green.jpg" alt="Pantone Green look."><figcaption class="look-tag look-tag--green">Pantone <span>Green</span></figcaption></figure>
+        <figure class="look" data-look="pantone-pink"><img src="assets/look-pantone-pink.jpg" alt="Pantone Pink look."><figcaption class="look-tag look-tag--pink">Pantone <span>Pink</span></figcaption></figure>
+      </div>
+    </section>
+
+    <!-- ============================================================ library -->
+    <section class="library-block">
+      <div class="library-head">
+        <button class="library-arrow" id="btn-download-all" title="Download every library image as a zip">
+          <span class="library-arrow-label">Download all</span>
+          <svg viewBox="0 0 24 24" width="44" height="44" fill="none" aria-hidden="true"><path d="M12 3v17m0 0l-7-7m7 7l7-7" stroke="#1A4CF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h2 class="library-title">Library</h2>
+      </div>
+      <div class="library-panel" id="library-panel">
+        <div class="ag" id="gallery" style="--ag-dur: 1.1s; gap: 2px"></div>
+      </div>
+      <!-- scrollbar BELOW the library panel (proxy, scroll-synced with it) -->
+      <div class="library-scrollbar" id="library-scrollbar"><div id="library-scrollbar-inner" style="height:1px"></div></div>
+    </section>
+
+    <!-- ============================================================ results + audit -->
+    <section class="audit">
+      <div class="side-copy">
+        <h2 class="section-title">Audit</h2>
+        <p>Quality assurance is built into every render. An automated audit compares each result to the original image and assigns a fidelity score based on how closely key elements match. The system flags issues such as changed objects, altered backgrounds, tinted skin, camera shifts, or color-rule violations. Recolor styles use specialized checks that allow intended color changes while detecting unwanted changes to content, identity, or composition.</p>
+      </div>
+      <div class="audit-panel">
+        <div class="auditcard" id="auditcard">
+          <div>
+            <div class="auditcard-head">
+              <span class="auditcard-title">Results.</span>
+              <div class="auditcard-stats">
+                <div class="stat"><span class="stat-label">Content score</span><span class="stat-value">92 / 100</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-label">Audited issues</span><span class="stat-value">0 Critical &middot; 2 Minor</span></div>
+                <span class="verdict-pill verdict-pill--green">( Conditional )</span>
+              </div>
+            </div>
+            <div class="auditcard-body">
+              <!-- ( summary ) always; ( critical ) only when there are critical
+                   issues; ( minor ); then ( colorist ) for Candid/Shadows renders
+                   or ( colours ) for Pantone recolours. Row numbers restart
+                   per section, as in the app. -->
+              <div class="auditcard-section">
+                <span class="auditcard-rail">( summary )</span>
+                <div class="auditcard-rows">
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">01</span><span class="row-title">Result</span></span><span class="row-detail">CONDITIONAL &mdash; content fidelity 92/100 (0 critical / 2 minor)</span></div>
+                </div>
+              </div>
+              <div class="auditcard-section">
+                <span class="auditcard-rail">( minor )</span>
+                <div class="auditcard-rows">
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">01</span><span class="row-title">HALLWAY &mdash; BACKGROUND_SIMPLIFIED</span></span><span class="row-detail">The corridor behind the subject loses its visible depth and distant door frame, flattening into a grey wall with a flash shadow.</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">02</span><span class="row-title">CARPET &mdash; TEXTURE_DRIFT</span></span><span class="row-detail">The stair carpet's speckled weave reads as a more linear striped pattern in the render, a subtle change to the object's surface design.</span></div>
+                </div>
+              </div>
+              <div class="auditcard-section">
+                <span class="auditcard-rail">( colorist )</span>
+                <div class="auditcard-rows">
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">01</span><span class="row-title">WHITE BALANCE &mdash; WARMTH</span></span><span class="row-detail">-0.42 film-warmth units</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">02</span><span class="row-title">EXPOSURE</span></span><span class="row-detail">+0.95</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">03</span><span class="row-title">SATURATION</span></span><span class="row-detail">colorist +0.1 &middot; desaturate 0 &middot; user +0</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">04</span><span class="row-title">HUE</span></span><span class="row-detail">0&deg;</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">05</span><span class="row-title">FLASH</span></span><span class="row-detail">boost +0.06 &middot; highlight rolloff 0.03</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">06</span><span class="row-title">LEVELS</span></span><span class="row-detail">in 20/248 &gamma;1.21 out 15/255</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">07</span><span class="row-title">GRAIN</span></span><span class="row-detail">strength 13.6 @ 2752px &middot; scale 0.75 &middot; 100%</span></div>
+                  <div class="auditcard-row"><span class="row-node"><span class="row-num">08</span><span class="row-title">BLUR</span></span><span class="row-detail">pre 0.65px &middot; final 1.09px</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- buttons ride the card's bottom edge in a mask that collapses with it -->
+        <div class="auditactions-mask" id="auditactions">
+          <div class="auditcard-actions auditcard-actions--static" aria-hidden="true">
+            <span class="btn btn--fill">Run restyle</span>
+            <span class="btn">Add to library</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ how it works + try me
+         Laid out from the "Audit Results" artboard's second frame (1296 x 576):
+         every position below is that frame's pixel value in --b units. -->
+    <section class="board" aria-label="How it works">
+      <!-- heading sits above the panel, in normal flow -->
+      <div class="board-head">
+        <h2 class="board-title">How it works</h2>
+      </div>
+
+      <div class="board-frame">
+      <div class="board-panel"></div>
+
+      <ol class="cards">
+        <li class="card" style="--x: 54"><span class="badge">1</span><h3 class="ct">Upload</h3><p class="cb">Drop a photo onto the grid canvas &mdash; single or a batch run across many frames.</p></li>
+        <li class="card" style="--x: 205"><span class="badge">2</span><h3 class="ct">Vision lock</h3><p class="cb">Claude reads the photo: a content-lock paragraph, the flash subject (auto or click-to-place), an auto-crop.</p></li>
+        <li class="card" style="--x: 355"><span class="badge">3</span><h3 class="ct">Look resolve</h3><p class="cb">The look loads from a Brain YAML &mdash; palette, rules, finish. Pantone colorways merge the family hard rules. Code holds no aesthetics.</p></li>
+        <li class="card" style="--x: 505"><span class="badge">4</span><h3 class="ct">Generate 4K</h3><p class="cb">Content-locked prompt to the Runway dev API (gemini_image3_pro). Developing frames stream to the canvas live.</p></li>
+        <li class="card" style="--x: 656"><span class="badge">5</span><h3 class="ct">Post pass</h3><p class="cb">Deterministic finish from the YAML: tone-match, film grain, levels, blur. Pantone looks: zero post, clean editorial.</p></li>
+        <li class="card" style="--x: 806"><span class="badge">6</span><h3 class="ct">Content audit</h3><p class="cb">Claude scores the render against the source, 0&ndash;100, with severity-coded violations. A critical fail is re-rolled &mdash; never delivered.</p></li>
+        <li class="card" style="--x: 957"><span class="badge">7</span><h3 class="ct">Finish tools</h3><p class="cb">Live-preview adjustments &mdash; grain, levels, colour &mdash; plus social-format crop with the move / scale / rotate gizmo. All free.</p></li>
+        <li class="card" style="--x: 1107"><span class="badge">8</span><h3 class="ct">Export + library</h3><p class="cb">Download the PNG. Add to library &mdash; explicit click only. Send any saved image back to the canvas to re-crop.</p></li>
+      </ol>
+
+      <!-- arrows between cards and the two return loops, in frame coordinates -->
+      <svg class="board-lines" viewBox="0 0 1296 576" aria-hidden="true">
+        <!-- card-to-card arrows: ride at mid-card, so they shift by half the extra card height -->
+        <g class="arrows" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M190 213 H200"/><path d="M341 213 H350"/><path d="M491 213 H500"/><path d="M641 213 H651"/>
+          <path d="M792 213 H801"/><path d="M942 213 H952"/><path d="M1093 213 H1102"/>
+        </g>
+        <g class="arrows" fill="currentColor">
+          <path d="M199 209 L205 213 L199 217 Z"/><path d="M349 209 L355 213 L349 217 Z"/><path d="M499 209 L505 213 L499 217 Z"/>
+          <path d="M650 209 L656 213 L650 217 Z"/><path d="M800 209 L806 213 L800 217 Z"/><path d="M951 209 L957 213 L951 217 Z"/>
+          <path d="M1101 209 L1107 213 L1101 217 Z"/>
+        </g>
+        <!-- return loops: rise from the card tops (the artboard's bottom loops mirrored
+             about the card top at y 137) and point back down into cards 4 and 7 -->
+        <g class="loops" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M872 137 V107 H571 V131"/>
+          <path d="M1172 137 V107 H1021 V131"/>
+        </g>
+        <g class="loops" fill="currentColor">
+          <path d="M566 130 L571 137 L576 130 Z"/><path d="M1016 130 L1021 137 L1026 130 Z"/>
+        </g>
+      </svg>
+
+      <!-- --x is each loop's horizontal centre (571..872 and 1021..1172); the label centres on it -->
+      <div class="lab" style="--x: 721.5; --y: 101">Critical fail &mdash; re-roll, never delivered</div>
+      <div class="lab" style="--x: 1096.5; --y: 101">Send back to canvas</div>
+
+      <p class="board-foot">Brand-safe photo restyle &middot; looks live as data in /Brain &middot; content is immutable</p>
+
+      <a class="try-link" href="#">Try me.</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Looks lightbox: a clicked look expands into this overlay -->
+  <div class="lightbox" id="lightbox" hidden>
+    <div class="lightbox__backdrop"></div>
+    <figure class="lightbox__figure">
+      <img class="lightbox__img" id="lightbox-img" alt="">
+      <figcaption class="lightbox__cap" id="lightbox-cap"></figcaption>
+    </figure>
+  </div>
+
+  <script src="sketch.js"></script>
+  <script>
+    window.StyleShiftSketch.mount(document.getElementById("page"));
+  </script>
+</body>
+</html>
