@@ -29,15 +29,22 @@ const RUN_STEPS = [
   ["applying the treatment", "adding film grain — strength 19.5 @ 2752px · scale 1.5"],
 ];
 
-// Library: 24 renders; the yellow-jacket portrait is the hero by default.
+// Library: 23 renders grouped by look, Candid first; the first is the hero.
+// (Device-only product shots are left out.)
 const LIBRARY = [
-  ["lib-02", "Candid"], ["lib-03", "Pantone Pink"], ["lib-04", "Pantone Green"], ["lib-05", "Pantone Pink"],
-  ["lib-06", "Candid"], ["lib-07", "Pantone Pink"], ["lib-08", "Pantone Blue"], ["lib-09", "Pantone Green"],
-  ["lib-10", "Pantone Pink"], ["lib-11", "Pantone Blue"], ["lib-12", "Pantone Green"],
-  ["lib-01", "Candid"],
-  ["lib-13", "Pantone Pink"], ["lib-14", "Candid"], ["lib-15", "Pantone Pink"], ["lib-16", "Pantone Pink"],
-  ["lib-17", "Candid"], ["lib-18", "Pantone Green"], ["lib-19", "Candid"], ["lib-20", "Candid"],
-  ["lib-21", "Candid"], ["lib-22", "Candid"], ["lib-23", "Candid"], ["lib-24", "Candid"],
+  // Candid
+  ["lib-06", "Candid"], ["lib-14", "Candid"], ["lib-17", "Candid"], ["lib-19", "Candid"],
+  ["lib-20", "Candid"], ["lib-22", "Candid"], ["lib-23", "Candid"], ["lib-24", "Candid"],
+  // Shadows
+  ["lib-25", "Shadows"],
+  // Pantone Blue
+  ["lib-11", "Pantone Blue"], ["lib-21", "Pantone Blue"],
+  // Pantone Green
+  ["lib-01", "Pantone Green"], ["lib-02", "Pantone Green"], ["lib-04", "Pantone Green"],
+  ["lib-09", "Pantone Green"], ["lib-12", "Pantone Green"], ["lib-18", "Pantone Green"],
+  // Pantone Pink
+  ["lib-03", "Pantone Pink"], ["lib-05", "Pantone Pink"], ["lib-10", "Pantone Pink"],
+  ["lib-13", "Pantone Pink"], ["lib-15", "Pantone Pink"], ["lib-16", "Pantone Pink"],
 ];
 
 let listeners = [];
@@ -301,7 +308,7 @@ function mountLibrary() {
 
 function addToLibrary() {
   const ag = $("#gallery");
-  const map = { candid: "lib-19", shadows: "lib-23", "pantone-blue": "lib-08", "pantone-green": "lib-04", "pantone-pink": "lib-03" };
+  const map = { candid: "lib-19", shadows: "lib-25", "pantone-blue": "lib-11", "pantone-green": "lib-04", "pantone-pink": "lib-03" };
   const p = makePanel(map[state.look] || "lib-19", LOOK_LABEL[state.look]);
   ag.prepend(p);
   for (const q of ag.querySelectorAll(".ag-panel")) q.classList.toggle("ag-panel--on", q === p);
