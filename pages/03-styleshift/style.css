@@ -76,7 +76,7 @@ button {
   padding-left: calc(469 * var(--u));
 }
 .intro-num {
-  font-weight: 700;
+  font-weight: 300; /* light weight; Inter 300 is loaded for this page */
   font-size: calc(178 * var(--u));
   line-height: 1;
   letter-spacing: -0.02em;
